@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+  redis_auth:
+    image: redis:6.2.6-alpine
+    container_name: redis_auth
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - auth-network
+
+  postgres_auth:
+    image: postgres:13
+    container_name: postgres_auth
+    restart: always
+    volumes:
+      - postgres_auth:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - auth-network
+
+  auth_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth_api
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=postgres_auth
+      - REDIS_HOST=redis_auth
+    depends_on:
+      - redis_auth
+      - postgres_auth
+    networks:
+      - auth-network
+
+volumes:
+  postgres_auth:
+
+networks:
+  auth-network:
+    name: auth-network

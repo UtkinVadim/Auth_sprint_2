@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "auth_sprint_1"
+version = "1"
+description = ""
+authors = ["Alexandr Galanov <alexandr.galanov@gmail.com>", "Vadim Utkin <utkinvadim1991@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = {version = "2.0.2", extras = ["async"]}
+gevent = "^21.12.0"
+Flask-JWT-Extended = "^4.3.1"
+psycopg2-binary = "^2.9.2"
+Flask-SQLAlchemy = "^2.5.1"
+Flask-RESTful = "^0.3.9"
+python-dotenv = "^0.19.2"
+alembic = "^1.7.5"
+aiohttp = "^3.8.1"
+multidict = "^5.2.0"
+redis = "^4.0.2"
+Flask-Testing = "^0.8.1"
+Flask-Alembic = "^2.0.1"
+flasgger = "^0.9.5"
+
+[tool.poetry.dev-dependencies]
+black = "21.10b0"
+flake8 = "4.0.1"
+pre-commit = "2.15.0"
+isort = "5.10.1"
+pytest = "6.1.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120

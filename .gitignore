@@ -1,0 +1,7 @@
+venv
+.idea
+.env
+_tmp
+/.mypy_cache/
+/poetry.lock
+/src/.pytest_cache/

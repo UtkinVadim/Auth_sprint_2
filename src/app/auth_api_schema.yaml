@@ -1,0 +1,521 @@
+swagger: '2.0'
+info:
+  title: Auth API
+  description: "Сервис для авторизации и аутентификации пользователей."
+  version: v1
+basePath: /api
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header  
+security:
+  - Bearer: []
+paths:
+  /user/sign_in:
+    post:
+      operationId: user_sign_in_create
+      description: "Логин пользователя."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestSignIn'
+      responses:
+        '200':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/TokensResponse'
+        '401':
+          description: 'Пользователь с переданным логином/паролем не найден.'
+          schema:
+            $ref: '#/definitions/ResponseUnauth'
+      tags:
+        - User
+    parameters: []
+  /user/sign_out:
+    post:
+      operationId: user_sign_out_create
+      description: "Логаут пользователя."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestSignOut'
+      responses:
+        '200':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/ResponseSignOut'
+      tags:
+        - User
+    parameters: []
+  /user/sign_up:
+    post:
+      operationId: user_sign_up_create
+      description: "Создание нового пользователя."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestSignUp'
+      responses:
+        '200':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/ResponseSignUpOk'
+        '409':
+          description: 'Пользователь с такими данными уже существует'
+          schema:
+            $ref: '#/definitions/ResponseSignUpConflict'
+      tags:
+        - User
+    parameters: []
+  /v1/access/role:
+    get:
+      operationId: v1_access_role_list
+      description: "Получение списка всех ролей."
+      parameters: []
+      responses:
+        '200':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/ResponseGetRole'
+      tags:
+        - Access
+    post:
+      operationId: v1_access_role_create
+      description: "Создание новой роли."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RoleRequest'
+      responses:
+        '201':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/RoleCreated'
+        '409':
+          description: 'Роль с переданным "title" уже существует.'
+          schema:
+            $ref: '#/definitions/RoleAlrExist'
+      tags:
+        - Access
+    patch:
+      operationId: v1_access_role_partial_update
+      description: "Изменение роли."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RolePatch'
+      responses:
+        '201':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/RoleUpdated'
+        '409':
+          description: 'Роли с переданным "title" не существует.'
+          schema:
+            $ref: '#/definitions/RoleNotExist'
+      tags:
+        - Access
+    delete:
+      operationId: v1_access_role_delete
+      description: "Удаление роли."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RoleRequest'
+      responses:
+        '201':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/RoleDeleted'
+        '409':
+          description: 'Роли с переданным "title" не существует.'
+          schema:
+            $ref: '#/definitions/RoleNotExist'
+      tags:
+        - Access
+    parameters: []
+  /v1/user/change:
+    post:
+      operationId: v1_user_change_create
+      description: "Изменение параметров пользователя."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestChangeUser'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/ResponseChangeUserOK'
+        '400':
+          description: 'При зменении пароля необходимо передать текущий пароль.'
+          schema:
+            $ref: '#/definitions/ResponseChangeUserBadRequest'
+        '401':
+          description: 'Переданный текущий пароль - неверный.'
+          schema:
+            $ref: '#/definitions/ResponseChangeUserUnauthorized'
+        '409':
+          description: 'Пользователь с такими данными уже существует'
+          schema:
+            $ref: '#/definitions/ResponseSignUpConflict'
+      tags:
+        - User
+    parameters: []
+  /v1/user/history:
+    get:
+      operationId: v1_user_history_read
+      description: "Получение списка логов (успешных сеансов аутентификации) пользователя."
+      parameters: []
+      responses:
+        '200':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/ResponseHistory'
+      tags:
+        - User
+    parameters: []
+  /v1/user/refresh:
+    get:
+      operationId: v1_user_refresh_read
+      description: "Обновление refresh токена."
+      parameters: []
+      responses:
+        '200':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/TokensResponse'
+      tags:
+        - User
+    parameters: []
+  /v1/user/role:
+    post:
+      operationId: v1_user_role_create
+      description: "Добавление роли пользователю."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestUserRole'
+      responses:
+        '200':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/ResponseUserRolePost'
+        '409':
+          description: 'У пользователя уже есть эта роль.'
+          schema:
+            $ref: '#/definitions/UserAlreadyHasRole'
+      tags:
+        - User
+    delete:
+      operationId: v1_user_role_delete
+      description: "Удаление роли пользователя."
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestUserRole'
+      responses:
+        '200':
+          description: 'ОК'
+          schema:
+            $ref: '#/definitions/ResponseUserRoleDelete'
+        '409':
+          description: 'У пользователя нет роли, которую вы пытаетесь удалить.'
+          schema:
+            $ref: '#/definitions/UserHasNoRole'
+      tags:
+        - User
+    parameters: []
+definitions:
+  RequestSignIn:
+    required:
+      - login
+      - password
+    type: object
+    properties:
+      login:
+        title: Login
+        description: The user's login
+        type: string
+      password:
+        title: Password
+        description: The user's password
+        type: string
+  TokensResponse:
+    required:
+      - access_token
+      - refresh_token
+    type: object
+    properties:
+      access_token:
+        title: Access token
+        type: string
+      refresh_token:
+        title: Refresh token
+        type: string
+  ResponseUnauth:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: invalid credentials
+  RequestSignOut:
+    type: object
+    properties:
+      form_all_places:
+        title: Form all places
+        description: Logout from all places
+        type: boolean
+  ResponseSignOut:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: Refresh token revoked
+  RequestSignUp:
+    required:
+      - login
+      - password
+      - email
+    type: object
+    properties:
+      login:
+        title: Login
+        description: The user's login
+        type: string
+      password:
+        title: Password
+        description: The user's password
+        type: string
+      first_name:
+        title: First name
+        description: The user's first_name
+        type: string
+      last_name:
+        title: Last name
+        description: The user's last_name
+        type: string
+      email:
+        title: Email
+        description: The user's email
+        type: string
+  ResponseSignUpOk:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: user created successfully
+  ResponseSignUpConflict:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: choose another login
+  UserAlreadyHasRole:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: user already has role
+  UserHasNoRole:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: user has no role
+  RoleModel:
+    required:
+      - id
+      - title
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+      title:
+        title: Title
+        type: string
+  ResponseGetRole:
+    required:
+      - roles
+    type: object
+    properties:
+      roles:
+        type: array
+        items:
+          $ref: '#/definitions/RoleModel'
+  RoleRequest:
+    required:
+      - title
+    type: object
+    properties:
+      title:
+        title: Title
+        description: The role's title
+        type: string
+  RoleCreated:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: role created
+  RoleAlrExist:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: role already exists
+  RolePatch:
+    required:
+      - title
+      - new_title
+    type: object
+    properties:
+      title:
+        title: Title
+        description: The role's current title
+        type: string
+      new_title:
+        title: New title
+        description: The role's new title
+        type: string
+  RoleUpdated:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: role updated
+  RoleNotExist:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: role does not exist
+  RoleDeleted:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: role deleted
+  RequestChangeUser:
+    type: object
+    properties:
+      login:
+        title: Login
+        description: New user's login
+        type: string
+      old_password:
+        title: Password
+        description: User password
+        type: string
+      new_password:
+        title: Password
+        description: New user's password
+        type: string
+  ResponseChangeUserOK:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: successfully changed
+  ResponseChangeUserBadRequest:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: enter your old password
+  ResponseChangeUserUnauthorized:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: invalid password
+  History:
+    required:
+      - event_date
+      - fingerprint
+      - user_id
+    type: object
+    properties:
+      event_date:
+        title: Event date
+        type: string
+        format: date-time
+      fingerprint:
+        title: Fingerprint
+        type: string
+      user_id:
+        title: User id
+        type: string
+  ResponseHistory:
+    required:
+      - events
+    type: object
+    properties:
+      events:
+        type: array
+        items:
+          $ref: '#/definitions/History'
+  RequestUserRole:
+    required:
+      - user_id
+      - role_id
+    type: object
+    properties:
+      user_id:
+        title: User id
+        type: string
+      role_id:
+        title: Role id
+        type: string
+  ResponseUserRolePost:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: role added
+  ResponseUserRoleDelete:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: role deleted
