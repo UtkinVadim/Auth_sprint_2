@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "auth_sprint_1"
+name = "auth_sprint_2"
 version = "1"
 description = ""
 authors = ["Alexandr Galanov <alexandr.galanov@gmail.com>", "Vadim Utkin <utkinvadim1991@gmail.com>"]
