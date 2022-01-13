@@ -15,15 +15,15 @@ class LoginHistory(db.Model):
     event_date = db.Column(db.DateTime(), default=datetime.utcnow)
 
     @classmethod
-    def log_sign_in(cls, user, fingerprint):
+    def log_sign_in(cls, user_id, fingerprint):
         """
         Создаёт запись в базе об успешном логине пользователя
 
-        :param user:
+        :param user_id:
         :param fingerprint:
         :return:
         """
-        log = LoginHistory(fingerprint=fingerprint, user_id=user.id)
+        log = LoginHistory(fingerprint=fingerprint, user_id=user_id)
         db.session.add(log)
         db.session.commit()
 
