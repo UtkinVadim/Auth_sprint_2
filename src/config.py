@@ -51,7 +51,7 @@ SUPERUSER_EMAIL = os.getenv("SUPERUSER_EMAIL")
 
 FACEBOOK_APP_ID = os.getenv("FACEBOOK_APP_ID")
 FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
-FACEBOOK_REDIRECT_URI = "https://192.168.3.16:5000/api/oauth2/callback/facebook"
+FACEBOOK_REDIRECT_URI = "https://localhost:5000/api/oauth2/callback/facebook"
 FACEBOOK_PARAMS = {'scope': 'email openid',
                    'response_type': 'code',
                    'redirect_uri': FACEBOOK_REDIRECT_URI}
