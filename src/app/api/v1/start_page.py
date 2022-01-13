@@ -1,4 +1,4 @@
-from flask import session, make_response
+from flask import session, make_response, render_template
 from flask_restful import Resource
 
 
@@ -10,8 +10,4 @@ class Homepage(Resource):
 
     def get(self):
         user = session.get('user')
-        return make_response(f'''<html>
-                                 <a href="/login/google">google login</a>
-                                 <br/>
-                                 {user}
-                                 </html>''')
+        return make_response(render_template("main.html", user=user))
