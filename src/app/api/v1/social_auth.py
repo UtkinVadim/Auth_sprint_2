@@ -1,12 +1,17 @@
 from http import HTTPStatus
+from typing import Type
 
+from authlib.integrations.flask_client import FlaskRemoteApp
 from flask import jsonify, make_response
 from flask import url_for
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
 
-from app import models, redis_client
 from app import oauth
+from app import models, redis_client
+from app.social_services_utils.base_data_parser import BaseDataParser
+from app.social_services_utils.google_data_parser import GoogleDataParser
+from app.social_services_utils.facebook_data_parser import FacebookDataParser
 
 sign_in_parser = reqparse.RequestParser()
 sign_in_parser.add_argument("User-Agent", dest="fingerprint", location="headers")
@@ -29,7 +34,7 @@ class SocialLogin(Resource):
 
 class SocialAuth(Resource):
     """
-    Класс авторизации чеерз соцсеть. На вход принимает имя соцсети.
+    Класс авторизации через соцсеть. На вход принимает имя соцсети.
     Проходит авторизацию в соцсети, получает данные о пользователе,
     по этим данным как на кофейной гуще гадает - есть ли у нас этот пользователь в базе
     (гадание начинается в models.SocialAccount.create_social_connect и дальше по коду)
@@ -42,25 +47,22 @@ class SocialAuth(Resource):
         # FIXME имхо, функция получлась "жирная" и запутанная.
         #  Первый кандидат на разбивку после добавления всех авторизация
         args = sign_in_parser.parse_args()
-        client = oauth.create_client(social_name)
+        client: FlaskRemoteApp = oauth.create_client(social_name)
         if not client:
             return {"message": "invalid social service"}, HTTPStatus.UNAUTHORIZED
         token = client.authorize_access_token()
 
-        # FIXME словарь с данными от соц сети, вероятно у разных сервисов они разные по содержанию
-        # FIXME гугл суёт id в 'sub'
-        # FIXME если данные будут сильно разниться между сервисами парсинг токена нужно будет вынести отдельно
-        userinfo_dict = client.parse_id_token(token)
-        social_id = userinfo_dict['sub']
+        user_data_parser = self.get_user_data_parser(client.name)
+        user_data = user_data_parser(client, token).get_user_info()
 
         # если social_id нет в базе - создать
-        if not models.SocialAccount.is_social_exist(social_id):
+        if not models.SocialAccount.is_social_exist(user_data.open_id):
             models.SocialAccount.create_social_connect(user_id=None,
-                                                       social_id=social_id,
+                                                       social_id=user_data.open_id,
                                                        social_name=social_name,
-                                                       user_fields=userinfo_dict)
+                                                       user_fields=user_data.dict())
 
-        user_id = models.SocialAccount.query.filter_by(social_id=social_id).first().user_id
+        user_id = models.SocialAccount.query.filter_by(social_id=user_data.open_id).first().user_id
 
         # обычная процедура логирования логина и выдачи jwt
         models.LoginHistory.log_sign_in(user_id, args["fingerprint"])
@@ -69,3 +71,10 @@ class SocialAuth(Resource):
         refresh_token = create_refresh_token(identity=user_id)
         redis_client.set_user_refresh_token(user_id=str(user_id), refresh_token=refresh_token)
         return make_response(jsonify(access_token=access_token, refresh_token=refresh_token), HTTPStatus.OK)
+
+    def get_user_data_parser(self, client_name: str) -> Type[BaseDataParser]:
+        parsers = {
+            "facebook": FacebookDataParser,
+            "google": GoogleDataParser
+        }
+        return parsers[client_name]
