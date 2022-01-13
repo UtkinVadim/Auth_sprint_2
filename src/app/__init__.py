@@ -1,16 +1,19 @@
+from flasgger import Swagger
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from app.redis_db import RedisConnector
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
-from flasgger import Swagger
+from authlib.integrations.flask_client import OAuth
 
 import config
+from app.oauth_services import google_register
+from app.redis_db import RedisConnector
 
 db = SQLAlchemy()
 redis_client = RedisConnector(config.REDIS_HOST, config.REDIS_PORT, config.REDIS_DB)
 jwt = JWTManager()
 swagger = Swagger(template_file='auth_api_schema.yaml')
+oauth = OAuth()
 
 
 def create_app(test_config: dict = None) -> Flask:
@@ -37,5 +40,7 @@ def create_app(test_config: dict = None) -> Flask:
         api.add_resource(resource, url)
 
     swagger.init_app(app)
+    oauth.init_app(app)
+    google_register(oauth)
 
     return app

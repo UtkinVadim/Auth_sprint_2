@@ -30,7 +30,7 @@ class SignIn(Resource):
         user = models.User.check_user_by_login(args)
         if not user:
             return {"message": "invalid credentials"}, HTTPStatus.UNAUTHORIZED
-        models.LoginHistory.log_sign_in(user, args["fingerprint"])
+        models.LoginHistory.log_sign_in(user.id, args["fingerprint"])
         user_roles_dict = models.User.get_user_roles(user_id=user.id)
         access_token = create_access_token(identity=user.id, additional_claims=user_roles_dict)
         refresh_token = create_refresh_token(identity=user.id)

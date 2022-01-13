@@ -4,6 +4,11 @@ from typing import Optional
 from uuid import uuid4
 
 from sqlalchemy.dialects.postgresql import BOOLEAN, UUID
+from sqlalchemy import or_
+
+import string
+from secrets import choice as secrets_choice
+
 
 import config
 from app import db
@@ -98,9 +103,7 @@ class User(db.Model):
         """
         login = user_fields["login"]
         user = User.query.filter_by(login=login).one_or_none()
-        if user:
-            return True
-        return False
+        return bool(user)
 
     @classmethod
     def password_hasher(
@@ -125,3 +128,18 @@ class User(db.Model):
 
     def check_password(self, password: str) -> bool:
         return self.password == self.password_hasher(password)
+
+    @classmethod
+    def get_user_by_universal_login(cls, login: Optional[str] = None, email: Optional[str] = None):
+        return User.query.filter(or_(User.login == login, User.email == email)).first()
+
+
+    @classmethod
+    def generate_random_string(cls) -> str:
+        """
+        Генерация криптостойкого пароля для новвых пользователей зашедших через соц. сети.
+
+        :return:
+        """
+        alphabet = ''.join([string.ascii_letters, string.digits])
+        return ''.join(secrets_choice.choice(alphabet) for _ in range(17))

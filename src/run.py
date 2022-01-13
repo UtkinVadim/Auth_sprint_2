@@ -2,7 +2,7 @@ from gevent import monkey
 
 from create_admin import create_admin
 
-monkey.patch_all()
+monkey.patch_all(ssl=False)
 
 import sys
 
@@ -15,7 +15,8 @@ app = create_app()
 
 if __name__ == "__main__":
     if "-d" in sys.argv:
-        app.run(host="0.0.0.0", port=SERVER_PORT, debug=True)
+        # FIXME возможно стоит спрятать flask за nginx и решать вопрос ssl уже в nginx, а не тут
+        app.run(host="0.0.0.0", port=SERVER_PORT, debug=True) #, ssl_context=('ddqdru.crt', 'ddqdru.key'))
     elif "--create-admin" in sys.argv:
         create_admin(app)
     else:
