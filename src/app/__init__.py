@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
 
 import config
-from app.oauth_services import google_register
+from app.social_services_utils.oauth_services import google_register, facebook_register
 from app.redis_db import RedisConnector
 
 db = SQLAlchemy()
@@ -21,7 +21,7 @@ def create_app(test_config: dict = None) -> Flask:
     Функция, создающая приложение на основе переданных конфигов, либо если конфиги не переданы - приложение
     создается используя конфиги из файла config.py.
     """
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True, template_folder="../templates")
 
     app.config.from_mapping(SECRET_KEY="dev", SQLALCHEMY_TRACK_MODIFICATIONS=False)
 
@@ -42,5 +42,6 @@ def create_app(test_config: dict = None) -> Flask:
     swagger.init_app(app)
     oauth.init_app(app)
     google_register(oauth)
+    facebook_register(oauth)
 
     return app
