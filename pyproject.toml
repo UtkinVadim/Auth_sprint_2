@@ -20,6 +20,8 @@ redis = "^4.0.2"
 Flask-Testing = "^0.8.1"
 Flask-Alembic = "^2.0.1"
 flasgger = "^0.9.5"
+Authlib = "^0.15.5"
+requests = "^2.27.1"
 
 [tool.poetry.dev-dependencies]
 black = "21.10b0"
