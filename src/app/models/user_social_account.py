@@ -101,6 +101,4 @@ class SocialAccount(db.Model):
         :return:
         """
         social_account = SocialAccount.query.filter_by(social_id=social_id).one_or_none()
-        if social_account:
-            return True
-        return False
+        return bool(social_account)

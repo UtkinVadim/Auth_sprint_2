@@ -103,9 +103,7 @@ class User(db.Model):
         """
         login = user_fields["login"]
         user = User.query.filter_by(login=login).one_or_none()
-        if user:
-            return True
-        return False
+        return bool(user)
 
     @classmethod
     def password_hasher(
