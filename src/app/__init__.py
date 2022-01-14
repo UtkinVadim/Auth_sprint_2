@@ -4,6 +4,8 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from authlib.integrations.flask_client import OAuth
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 import config
 from app.social_services_utils.oauth_services import google_register, facebook_register
@@ -14,6 +16,7 @@ redis_client = RedisConnector(config.REDIS_HOST, config.REDIS_PORT, config.REDIS
 jwt = JWTManager()
 swagger = Swagger(template_file='auth_api_schema.yaml')
 oauth = OAuth()
+limiter = Limiter(key_func=get_remote_address, storage_uri=config.BUCKET_REDIS_URI, default_limits=["30 per minute"])
 
 
 def create_app(test_config: dict = None) -> Flask:
@@ -40,8 +43,11 @@ def create_app(test_config: dict = None) -> Flask:
         api.add_resource(resource, url)
 
     swagger.init_app(app)
+
     oauth.init_app(app)
     google_register(oauth)
     facebook_register(oauth)
+
+    limiter.init_app(app)
 
     return app
