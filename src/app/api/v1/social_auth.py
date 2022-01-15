@@ -7,6 +7,7 @@ from flask import url_for
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
 
+import config
 from app import oauth
 from app import models, redis_client
 from app.social_services_utils.base_data_parser import BaseDataParser
@@ -28,7 +29,12 @@ class SocialLogin(Resource):
         if not client:
             return {"message": "invalid social service"}, HTTPStatus.UNAUTHORIZED
 
-        redirect_uri = url_for('socialauth', social_name=name, _external=True)
+        # PREFERRED_URL_SCHEME из env почему то игнорируется, поэтому явно указываю _scheme
+        if config.USE_NGINX:
+            scheme = 'https'
+        else:
+            scheme = 'http'
+        redirect_uri = url_for('socialauth', social_name=name, _external=True, _scheme=scheme)
         return client.authorize_redirect(redirect_uri)
 
 
