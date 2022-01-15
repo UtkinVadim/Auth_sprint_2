@@ -32,6 +32,7 @@ def create_app(test_config: dict = None) -> Flask:
     if test_config is None:
         app.config.from_object("config")
         jwt.init_app(app)
+        add_tracer(app)
     else:
         app.config.from_mapping(test_config)
 
@@ -57,7 +58,5 @@ def create_app(test_config: dict = None) -> Flask:
     facebook_register(oauth)
 
     limiter.init_app(app)
-
-    add_tracer(app)
 
     return app
