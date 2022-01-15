@@ -4,7 +4,7 @@ from typing import Optional
 from uuid import uuid4
 
 from sqlalchemy.dialects.postgresql import BOOLEAN, UUID
-from sqlalchemy import or_
+from sqlalchemy import or_, UniqueConstraint
 
 import string
 from secrets import choice as secrets_choice
@@ -14,18 +14,38 @@ import config
 from app import db
 
 
+def create_partition(target, connection, **kwargs) -> None:
+    """
+    Создание патрицирования для таблицы юзеров.
+    Разделяются на активных и не активных.
+    """
+    connection.execute(
+        """CREATE TABLE IF NOT EXISTS "active_user" PARTITION OF "user_auth" FOR VALUES IN ('true')"""
+    )
+    connection.execute(
+        """CREATE TABLE IF NOT EXISTS "inactive_user" PARTITION OF "user_auth" FOR VALUES IN ('false')"""
+    )
+
+
 class User(db.Model):
     __tablename__ = "user_auth"
+    __table_args__ = (
+        UniqueConstraint('id', 'is_active', 'login'),
+        {
+            'postgresql_partition_by': 'LIST (is_active)',
+            'listeners': [('after_create', create_partition)],
+        }
+    )
 
-    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
-    login = db.Column(db.String, unique=True, nullable=False)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, nullable=False)
+    login = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
     created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
     roles = db.relationship("Role", secondary="user_role", backref=db.backref("user_auth", lazy="dynamic"))
-    is_active = db.Column(BOOLEAN, default=True)
+    is_active = db.Column(BOOLEAN, default=True, primary_key=True)
 
     @classmethod
     def create(cls, user_fields: dict) -> Optional[db.Model]:
