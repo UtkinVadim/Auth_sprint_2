@@ -33,15 +33,22 @@ def create_app(test_config: dict = None) -> Flask:
         app.config.from_object("config")
         jwt.init_app(app)
         add_tracer(app)
+        if config.USE_NGINX:
+            @app.before_request
+            def before_request():
+                """
+                Добавляет строгую проверку наличия заголовка 'X-Request-Id'
+                Если заголовка нет - возбуждает исключение
+
+                :return:
+                """
+                request_id = request.headers.get('X-Request-Id')
+                if not request_id:
+                    raise RuntimeError('request id is required')
     else:
         app.config.from_mapping(test_config)
 
-    if config.USE_NGINX:
-        @app.before_request
-        def before_request():
-            request_id = request.headers.get('X-Request-Id')
-            if not request_id:
-                raise RuntimeError('request id is required')
+
 
     db.init_app(app)
 
