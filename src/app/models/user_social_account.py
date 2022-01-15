@@ -1,7 +1,10 @@
+import datetime
+import random
+import string
 from typing import Optional
+from uuid import uuid4
 
 from sqlalchemy.dialects.postgresql import UUID
-from uuid import uuid4
 
 from app import db
 from app.models.user import User
@@ -47,7 +50,7 @@ class SocialAccount(db.Model):
     @classmethod
     def create_user_from_social_account(cls,
                                         login: Optional[str] = None,
-                                        password: Optional[str] = '*',
+                                        password: Optional[str] = None,
                                         email: Optional[str] = '*@*',
                                         first_name: Optional[str] = None,
                                         last_name: Optional[str] = None,
@@ -67,21 +70,10 @@ class SocialAccount(db.Model):
         if User.is_login_exist({'login': login}):
             return User.get_user_by_universal_login(login=login).id
 
-        import string
-        import random
-        import datetime
-
-        def id_generator(size=2, chars=string.ascii_uppercase + string.digits) -> str:
-            """
-            Генерирует псевдологин,
-            состоит из радномного символа + timestamp + радномный символ (другой).
-            """
-            # FIXME refactor_me
-            str_time = str(datetime.datetime.now().timestamp())
-            return str_time.join(random.choice(chars) for _ in range(size))
-
         if not login:
-            login = id_generator()
+            login = cls.id_generator()
+        if not password:
+            password = cls.id_generator()
 
         user = User.create({'login': login,
                             'password': password,
@@ -102,3 +94,12 @@ class SocialAccount(db.Model):
         """
         social_account = SocialAccount.query.filter_by(social_id=social_id).one_or_none()
         return bool(social_account)
+
+    @staticmethod
+    def id_generator(size=2, chars=string.ascii_uppercase + string.digits) -> str:
+        """
+        Генерирует строку,
+        состоящую из радномный символ + timestamp + радномный символ (другой).
+        """
+        str_time = str(datetime.datetime.now().timestamp())
+        return str_time.join(random.choice(chars) for _ in range(size))
