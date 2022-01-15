@@ -1,19 +1,26 @@
 import datetime
 from uuid import uuid4
 
+from sqlalchemy import BOOLEAN, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.schema import UniqueConstraint
 
 from app import db
+from app.models.user import User
 
 
 class UserRole(db.Model):
     __tablename__ = "user_role"
-    __table_args__ = (UniqueConstraint("user_id", "role_id", name="unique_user_role"),)
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, unique=True, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("user_auth.id"), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), nullable=False)
+    user_is_active = db.Column(BOOLEAN, default=True)
     role_id = db.Column(UUID(as_uuid=True), db.ForeignKey("role.id"), nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+
+    __table_args__ = (UniqueConstraint("user_id", "role_id", name="unique_user_role"),
+                      ForeignKeyConstraint((user_id, user_is_active),
+                                           (User.id, User.is_active)),
+                      {})
 
     @classmethod
     def add(cls, user_id, role_id):
