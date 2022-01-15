@@ -48,8 +48,6 @@ def create_app(test_config: dict = None) -> Flask:
     else:
         app.config.from_mapping(test_config)
 
-
-
     db.init_app(app)
 
     api = Api(app)
