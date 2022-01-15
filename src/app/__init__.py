@@ -1,5 +1,5 @@
 from flasgger import Swagger
-from flask import Flask
+from flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +10,7 @@ from flask_limiter.util import get_remote_address
 import config
 from app.social_services_utils.oauth_services import google_register, facebook_register
 from app.redis_db import RedisConnector
+from app.telemetry import add_tracer
 
 db = SQLAlchemy()
 redis_client = RedisConnector(config.REDIS_HOST, config.REDIS_PORT, config.REDIS_DB)
@@ -34,6 +35,13 @@ def create_app(test_config: dict = None) -> Flask:
     else:
         app.config.from_mapping(test_config)
 
+    if config.USE_NGINX:
+        @app.before_request
+        def before_request():
+            request_id = request.headers.get('X-Request-Id')
+            if not request_id:
+                raise RuntimeError('request id is required')
+
     db.init_app(app)
 
     api = Api(app)
@@ -49,5 +57,7 @@ def create_app(test_config: dict = None) -> Flask:
     facebook_register(oauth)
 
     limiter.init_app(app)
+
+    add_tracer(app)
 
     return app
