@@ -4,6 +4,7 @@ import string
 from typing import Optional
 from uuid import uuid4
 
+from sqlalchemy import BOOLEAN, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import UUID
 
 from app import db
@@ -14,13 +15,18 @@ class SocialAccount(db.Model):
     __tablename__ = 'social_account'
 
     id = db.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('user_auth.id'), nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), nullable=False)
+    user_is_active = db.Column(BOOLEAN, default=True)
     user = db.relationship(User, backref=db.backref('social_accounts', lazy=True))
 
     social_id = db.Column(db.Text, nullable=False)
     social_name = db.Column(db.Text, nullable=False)
 
-    __table_args__ = (db.UniqueConstraint('social_id', 'social_name', name='social_pk'),)
+    __table_args__ = (db.UniqueConstraint('social_id', 'social_name', name='social_pk'),
+                      ForeignKeyConstraint((user_id, user_is_active),
+                                           (User.id, User.is_active)),
+                      {}
+                      )
 
     def __repr__(self):
         return f'<SocialAccount {self.social_name}:{self.user_id}>'

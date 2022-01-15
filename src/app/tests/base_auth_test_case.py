@@ -60,13 +60,19 @@ class BaseAuthTestCase(TestCase):
         """
         self.client.post(self.sign_up_url, json=USER_DATA)
         self.user = User.query.filter_by(login=USER_DATA.get("login")).first()
-        self.role = Role.create(title="admin")
+        self.role = self.create_admin_role()
         UserRole.add(self.user.id, self.role.id)
         response = self.client.post(self.sign_in_url, json=USER_DATA)
         self.access_token = response.json["access_token"]
         self.refresh_token = response.json["refresh_token"]
         self.headers = {"Authorization": f"Bearer {self.access_token}"}
         self.headers_refresh = {"Authorization": f"Bearer {self.refresh_token}"}
+
+    def create_admin_role(self):
+        admin_role = Role.query.filter_by(title="admin").one_or_none()
+        if admin_role:
+            return admin_role
+        return Role.create(title="admin")
 
     def create_new_user(self, login: str = None, password: str = None, email: str = None) -> User:
         """
