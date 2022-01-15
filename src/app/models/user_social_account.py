@@ -67,8 +67,9 @@ class SocialAccount(db.Model):
         :return:
         """
 
-        if User.is_login_exist({'login': login}):
-            return User.get_user_by_universal_login(login=login).id
+        if login or email:
+            if user := User.get_user_by_universal_login(login=login, email=email):
+                return user.id
 
         if not login:
             login = cls.id_generator()
