@@ -34,9 +34,19 @@ services:
     environment:
       - POSTGRES_HOST=postgres_auth
       - REDIS_HOST=redis_auth
+      - JAEGER_HOST=jagger
     depends_on:
       - redis_auth
       - postgres_auth
+    networks:
+      - auth-network
+
+  jagger:
+    image: jaegertracing/all-in-one:1.30.0
+    container_name: jagger
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
     networks:
       - auth-network
 
