@@ -1,4 +1,4 @@
-from config import GOOGLE_DISCOVERY_URL, FACEBOOK_APP_SECRET, FACEBOOK_APP_ID
+from config import GOOGLE_DISCOVERY_URL, FACEBOOK_APP_SECRET, FACEBOOK_APP_ID, YANDEX_APP_SECRET, YANDEX_APP_ID
 
 
 def google_register(oauth):
@@ -36,4 +36,22 @@ def facebook_register(oauth):
         authorize_params=None,
         api_base_url="https://graph.facebook.com/",
         client_kwargs={"scope": "email openid public_profile"}
+    )
+
+
+def yandex_register(oauth):
+    """
+    Регистрирует yandex как сервис в котором можно пройти oauth
+    После регистрации oauth получает атрибут с именем указанным в name
+
+    :param oauth:
+    :return:
+    """
+    oauth.register(
+        name='yandex',
+        client_id=YANDEX_APP_ID,
+        client_secret=YANDEX_APP_SECRET,
+        api_base_url='https://login.yandex.ru/',
+        access_token_url='https://oauth.yandex.com/token',
+        authorize_url='https://oauth.yandex.com/authorize',
     )

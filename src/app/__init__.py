@@ -8,7 +8,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 import config
-from app.social_services_utils.oauth_services import google_register, facebook_register
+from app.social_services_utils.oauth_services import google_register, facebook_register, yandex_register
 from app.redis_db import RedisConnector
 from app.telemetry import add_tracer
 
@@ -61,6 +61,7 @@ def create_app(test_config: dict = None) -> Flask:
     oauth.init_app(app)
     google_register(oauth)
     facebook_register(oauth)
+    yandex_register(oauth)
 
     limiter.init_app(app)
 

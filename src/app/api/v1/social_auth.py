@@ -1,18 +1,14 @@
 from http import HTTPStatus
 from typing import Type
 
+import config
+from app import models, oauth, redis_client
+from app.social_services_utils import (BaseDataParser, FacebookDataParser,
+                                       GoogleDataParser, YandexDataParser)
 from authlib.integrations.flask_client import FlaskRemoteApp
-from flask import jsonify, make_response
-from flask import url_for
+from flask import jsonify, make_response, url_for
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
-
-import config
-from app import oauth
-from app import models, redis_client
-from app.social_services_utils.base_data_parser import BaseDataParser
-from app.social_services_utils.google_data_parser import GoogleDataParser
-from app.social_services_utils.facebook_data_parser import FacebookDataParser
 
 sign_in_parser = reqparse.RequestParser()
 sign_in_parser.add_argument("User-Agent", dest="fingerprint", location="headers")
@@ -81,6 +77,7 @@ class SocialAuth(Resource):
     def get_user_data_parser(self, client_name: str) -> Type[BaseDataParser]:
         parsers = {
             "facebook": FacebookDataParser,
+            "yandex": YandexDataParser,
             "google": GoogleDataParser
         }
         return parsers[client_name]
