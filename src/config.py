@@ -51,7 +51,7 @@ SUPERUSER_EMAIL = os.getenv("SUPERUSER_EMAIL")
 
 FACEBOOK_APP_ID = os.getenv("FACEBOOK_APP_ID")
 FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
-FACEBOOK_REDIRECT_URI = "https://localhost:5000/api/oauth2/callback/facebook"
+FACEBOOK_REDIRECT_URI = f"https://{SERVER_HOST}:{SERVER_PORT}/api/oauth2/callback/facebook"
 FACEBOOK_PARAMS = {'scope': 'email openid',
                    'response_type': 'code',
                    'redirect_uri': FACEBOOK_REDIRECT_URI}
@@ -62,3 +62,10 @@ GOOGLE_DISCOVERY_URL = os.getenv("GOOGLE_DISCOVERY_URL")
 
 BUCKET_REDIS_DATABASE = 1
 BUCKET_REDIS_URI = f"redis://{REDIS_HOST}:{REDIS_PORT}?db={BUCKET_REDIS_DATABASE}"
+
+USE_NGINX = int(os.getenv("USE_NGINX", 0))
+
+JAEGER_HOST = os.getenv("JAEGER_HOST", 'localhost')
+JAEGER_PORT = int(os.getenv("JAEGER_PORT", 6831))
+SERVICE_NAME_IN_JAEGER = '_'.join(["movies", SERVER_HOST, POSTGRES_HOST, REDIS_HOST])
+JAEGER_EXCLUDED_URLS = os.getenv("JAEGER_EXCLUDED_URLS", "")
