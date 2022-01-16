@@ -32,13 +32,48 @@ services:
     env_file:
       - .env
     environment:
+      - SERVER_HOST=0.0.0.0
       - POSTGRES_HOST=postgres_auth
       - REDIS_HOST=redis_auth
+      - JAEGER_HOST=jagger
+      - USE_NGINX=1
     depends_on:
       - redis_auth
       - postgres_auth
+      - jagger
     networks:
       - auth-network
+
+  jagger:
+    image: jaegertracing/all-in-one:1.30.0
+    container_name: jagger
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+    networks:
+      - auth-network
+
+  nginx:
+    image: nginx:1.21.3
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ./nginx/site.conf.template:/etc/nginx/conf.d/site.conf.template:ro
+      - ./nginx/localhost.key:/etc/ssl/private/localhost.key:ro
+      - ./nginx/localhost.crt:/etc/ssl/certs/localhost.crt:ro
+      - ./nginx/nginx_entrypoint.sh:/docker-entrypoint.d/nginx_entrypoint.sh
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+      - SERVER_NAME=auth_api
+      - SERVER_PORT=${SERVER_PORT}
+      - WORKERS_COUNT=${WORKERS_COUNT}
+    depends_on:
+      - auth_api
+    networks:
+      - auth-network
+    ports:
+      - "80:80"
+      - "443:443"
 
 volumes:
   postgres_auth:

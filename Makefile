@@ -6,6 +6,7 @@ env:
 dbs:
 	docker compose up postgres_auth -d --build
 	docker compose up redis_auth -d --build
+	docker compose up jagger -d --build
 	docker exec -it postgres_auth psql -U postgres
 
 down:
@@ -24,12 +25,15 @@ run_debug:
 	cd src && python run.py -d
 
 init_app:
-	docker-compose up --build -d postgres_auth
-	docker-compose up --build -d redis_auth
+	docker compose up postgres_auth -d --build
+	docker compose up redis_auth -d --build
+	docker compose up jagger -d --build
+	docker compose up nginx -d --build
 
 run_app:
-	docker-compose up --build -d auth_api
+	docker compose up auth_api -d --build
 	docker exec -it auth_api alembic upgrade head
+	docker logs -f auth_api
 
 run_prod:
 	docker compose up --build -d

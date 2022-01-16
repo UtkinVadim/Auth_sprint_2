@@ -15,8 +15,7 @@ app = create_app()
 
 if __name__ == "__main__":
     if "-d" in sys.argv:
-        # FIXME возможно стоит спрятать flask за nginx и решать вопрос ssl уже в nginx, а не тут
-        app.run(host="0.0.0.0", port=SERVER_PORT, debug=True) #, ssl_context=('ddqdru.crt', 'ddqdru.key'))
+        app.run(host="0.0.0.0", port=SERVER_PORT, debug=True, use_reloader=False)
     elif "--create-admin" in sys.argv:
         create_admin(app)
     else:
