@@ -1,15 +1,23 @@
 from http import HTTPStatus
-from typing import Type
+from typing import Type, TYPE_CHECKING
 
 import config
+
 from app import models, oauth, redis_client
-from app.social_services_utils import (BaseDataParser, FacebookDataParser,
-                                       GoogleDataParser, YandexDataParser,
-                                       VkDataParser)
-from authlib.integrations.flask_client import FlaskRemoteApp
-from flask import jsonify, make_response, url_for
-from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_restful import Resource, reqparse
+from flask import jsonify, make_response, url_for
+from authlib.integrations.flask_client import FlaskRemoteApp
+from flask_jwt_extended import create_access_token, create_refresh_token
+from app.social_services_utils import (
+    BaseDataParser,
+    FacebookDataParser,
+    GoogleDataParser,
+    YandexDataParser,
+    VkDataParser
+)
+
+if TYPE_CHECKING:
+    from app.social_services_utils.social_user_model import SocialUserModel
 
 sign_in_parser = reqparse.RequestParser()
 sign_in_parser.add_argument("User-Agent", dest="fingerprint", location="headers")
@@ -47,35 +55,45 @@ class SocialAuth(Resource):
     И в самом конце уже как обычно логируем заход пользователя и возвращаем уже наши access и refresh jwt
     """
     def get(self, social_name):
-        # FIXME имхо, функция получлась "жирная" и запутанная.
-        #  Первый кандидат на разбивку после добавления всех авторизация
         args = sign_in_parser.parse_args()
         client: FlaskRemoteApp = oauth.create_client(social_name)
+
         if not client:
             return {"message": "invalid social service"}, HTTPStatus.UNAUTHORIZED
-        token = client.authorize_access_token()
 
+        token = client.authorize_access_token()
         user_data_parser = self.get_user_data_parser(client.name)
         user_data = user_data_parser(client, token).get_user_info()
+        user_id = self.get_user_id_from_social_account(social_name=client.name, user_data=user_data)
+        access_token, refresh_token = self.login_user(user_id, args)
+        return make_response(jsonify(access_token=access_token, refresh_token=refresh_token), HTTPStatus.OK)
 
-        # если social_id нет в базе - создать
-        if not models.SocialAccount.is_social_exist(user_data.open_id):
-            models.SocialAccount.create_social_connect(user_id=None,
-                                                       social_id=user_data.open_id,
-                                                       social_name=social_name,
-                                                       user_fields=user_data.dict())
-
-        user_id = models.SocialAccount.query.filter_by(social_id=user_data.open_id).first().user_id
-
-        # обычная процедура логирования логина и выдачи jwt
+    def login_user(self, user_id: str, args: dict) -> (str, str):
+        """
+        Метод для логина пользователя и получения токенов.
+        """
         models.LoginHistory.log_sign_in(user_id, args["fingerprint"])
         user_roles_dict = models.User.get_user_roles(user_id=user_id)
         access_token = create_access_token(identity=user_id, additional_claims=user_roles_dict)
         refresh_token = create_refresh_token(identity=user_id)
         redis_client.set_user_refresh_token(user_id=str(user_id), refresh_token=refresh_token)
-        return make_response(jsonify(access_token=access_token, refresh_token=refresh_token), HTTPStatus.OK)
+        return access_token, refresh_token
+
+    def get_user_id_from_social_account(self, social_name: str, user_data: "SocialUserModel") -> str:
+        """
+        Получения user_id из SocialAccount. Если social_account не создан - он создается.
+        """
+        if not models.SocialAccount.is_social_exist(user_data.open_id):
+            models.SocialAccount.create_social_connect(user_id=None,
+                                                       social_id=user_data.open_id,
+                                                       social_name=social_name,
+                                                       user_fields=user_data.dict())
+        return models.SocialAccount.query.filter_by(social_id=user_data.open_id).first().user_id
 
     def get_user_data_parser(self, client_name: str) -> Type[BaseDataParser]:
+        """
+        Метод, возвращающий класс для парсинга данных полученных от сервиса.
+        """
         parsers = {
             "facebook": FacebookDataParser,
             "yandex": YandexDataParser,
