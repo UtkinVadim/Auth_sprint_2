@@ -8,6 +8,7 @@ from .sign_up import SignUp
 from .social_auth import SocialLogin, SocialAuth
 from .start_page import Homepage
 from .user_history import UserHistory
+from .remove_social_account import RemoveSocialAccount
 
 urls = [
     (SignIn, "/api/user/sign_in"),
@@ -22,4 +23,5 @@ urls = [
     (SocialLogin, "/login/<string:name>"),
     (SocialAuth, "/api/oauth2/callback/<string:social_name>"),
     (Homepage, "/"),
+    (RemoveSocialAccount, "/api/remove_social_account")
 ]

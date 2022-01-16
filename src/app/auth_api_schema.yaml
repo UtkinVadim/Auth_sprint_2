@@ -16,6 +16,49 @@ securityDefinitions:
 security:
   - Bearer: []
 paths:
+  /login/{service_name}:
+    get:
+      operationId: social_auth
+      description: "Авторизация/аутентификация пользователя через социальные сервисы."
+      parameters:
+        - name: service_name
+          in: path
+          type: string
+          required: true
+          description: "Сервис через который будет происходит авторизация. Доступные на данный момент сервисы: vk, google, facebook, yandex."
+      responses:
+        '200':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/TokensResponse'
+        '401':
+          description: 'Регистрация через переданный service_name не реализована. Доступные на данный момент сервисы: vk, google, facebook, yandex.'
+          schema:
+            $ref: '#/definitions/InvalidServiceResponse'
+      tags:
+        - SocialService
+  /api/remove_social_account:
+    post:
+      operationId: remove_social_account
+      description: "Открепление аккаунта в соц сетях от пользователя."
+      parameters:
+        - name: data
+          in: body
+          description: "Имя сервиса, от которого нужно открепить пользователя."
+          required: true
+          schema:
+            $ref: '#/definitions/RequestRemoveSocialAccount'
+      responses:
+        '200':
+          description: 'OK'
+          schema:
+            $ref: '#/definitions/TokensResponse'
+        '401':
+          description: 'Регистрация через переданный service_name не реализована. Доступные на данный момент сервисы: vk, google, facebook, yandex.'
+          schema:
+            $ref: '#/definitions/InvalidServiceResponse'
+      tags:
+        - SocialService
   /user/sign_in:
     post:
       operationId: user_sign_in_create
@@ -264,6 +307,15 @@ definitions:
         title: Password
         description: The user's password
         type: string
+  RequestRemoveSocialAccount:
+    required:
+      - social_name
+    type: object
+    properties:
+      social_name:
+        title: social_name
+        description: Name of social service.
+        type: string
   TokensResponse:
     required:
       - access_token
@@ -283,6 +335,13 @@ definitions:
         title: Message
         type: string
         default: invalid credentials
+  InvalidServiceResponse:
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        default: invalid social service
   RequestSignOut:
     type: object
     properties:

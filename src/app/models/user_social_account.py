@@ -110,3 +110,7 @@ class SocialAccount(db.Model):
         """
         str_time = str(datetime.datetime.now().timestamp())
         return str_time.join(random.choice(chars) for _ in range(size))
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
