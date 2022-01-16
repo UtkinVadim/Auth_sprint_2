@@ -86,3 +86,10 @@ def vk_register(oauth):
             "scope": "email"
         }
     )
+
+
+def create_oauth_services(oauth):
+    google_register(oauth)
+    facebook_register(oauth)
+    yandex_register(oauth)
+    vk_register(oauth)

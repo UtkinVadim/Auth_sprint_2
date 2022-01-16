@@ -8,9 +8,9 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 import config
-from app.social_services_utils.oauth_services import google_register, facebook_register, yandex_register, vk_register
-from app.redis_db import RedisConnector
 from app.telemetry import add_tracer
+from app.redis_db import RedisConnector
+from app.social_services_utils.oauth_services import create_oauth_services
 
 db = SQLAlchemy()
 redis_client = RedisConnector(config.REDIS_HOST, config.REDIS_PORT, config.REDIS_DB)
@@ -59,10 +59,7 @@ def create_app(test_config: dict = None) -> Flask:
     swagger.init_app(app)
 
     oauth.init_app(app)
-    google_register(oauth)
-    facebook_register(oauth)
-    yandex_register(oauth)
-    vk_register(oauth)
+    create_oauth_services(oauth)
 
     limiter.init_app(app)
 

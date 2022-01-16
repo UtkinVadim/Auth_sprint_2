@@ -51,10 +51,6 @@ SUPERUSER_EMAIL = os.getenv("SUPERUSER_EMAIL")
 
 FACEBOOK_APP_ID = os.getenv("FACEBOOK_APP_ID")
 FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
-FACEBOOK_REDIRECT_URI = f"https://{SERVER_HOST}:{SERVER_PORT}/api/oauth2/callback/facebook"
-FACEBOOK_PARAMS = {'scope': 'email openid',
-                   'response_type': 'code',
-                   'redirect_uri': FACEBOOK_REDIRECT_URI}
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
