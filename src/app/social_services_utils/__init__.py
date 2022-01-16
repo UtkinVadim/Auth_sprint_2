@@ -2,3 +2,4 @@ from app.social_services_utils.base_data_parser import BaseDataParser
 from app.social_services_utils.google_data_parser import GoogleDataParser
 from app.social_services_utils.facebook_data_parser import FacebookDataParser
 from app.social_services_utils.yandex_data_parser import YandexDataParser
+from app.social_services_utils.vk_data_parser import VkDataParser

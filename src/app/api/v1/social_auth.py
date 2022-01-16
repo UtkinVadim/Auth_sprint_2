@@ -4,7 +4,8 @@ from typing import Type
 import config
 from app import models, oauth, redis_client
 from app.social_services_utils import (BaseDataParser, FacebookDataParser,
-                                       GoogleDataParser, YandexDataParser)
+                                       GoogleDataParser, YandexDataParser,
+                                       VkDataParser)
 from authlib.integrations.flask_client import FlaskRemoteApp
 from flask import jsonify, make_response, url_for
 from flask_jwt_extended import create_access_token, create_refresh_token
@@ -78,6 +79,7 @@ class SocialAuth(Resource):
         parsers = {
             "facebook": FacebookDataParser,
             "yandex": YandexDataParser,
-            "google": GoogleDataParser
+            "google": GoogleDataParser,
+            "vk": VkDataParser
         }
         return parsers[client_name]
