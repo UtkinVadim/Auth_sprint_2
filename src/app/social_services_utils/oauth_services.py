@@ -1,4 +1,12 @@
-from config import GOOGLE_DISCOVERY_URL, FACEBOOK_APP_SECRET, FACEBOOK_APP_ID, YANDEX_APP_SECRET, YANDEX_APP_ID
+from config import (
+    GOOGLE_DISCOVERY_URL,
+    FACEBOOK_APP_SECRET,
+    FACEBOOK_APP_ID,
+    YANDEX_APP_SECRET,
+    YANDEX_APP_ID,
+    VK_CLIENT_ID,
+    VK_SECRET_KEY
+)
 
 
 def google_register(oauth):
@@ -54,4 +62,27 @@ def yandex_register(oauth):
         api_base_url='https://login.yandex.ru/',
         access_token_url='https://oauth.yandex.com/token',
         authorize_url='https://oauth.yandex.com/authorize',
+    )
+
+
+def vk_register(oauth):
+    """
+    Регистрирует vkontakte как сервис в котором можно пройти oauth
+    После регистрации oauth получает атрибут с именем указанным в name
+
+    :param oauth:
+    :return:
+    """
+    oauth.register(
+        name='vk',
+        client_id=VK_CLIENT_ID,
+        client_secret=VK_SECRET_KEY,
+        api_base_url="https://api.vk.com/method/",
+        access_token_url="https://oauth.vk.com/access_token",
+        authorize_url="https://oauth.vk.com/authorize",
+        client_kwargs={
+            "token_placement": "uri",
+            "token_endpoint_auth_method": "client_secret_post",
+            "scope": "email"
+        }
     )
