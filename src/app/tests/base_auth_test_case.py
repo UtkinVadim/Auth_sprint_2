@@ -7,14 +7,7 @@ from flask_testing import TestCase
 from app import create_app, db, jwt, redis_client
 from app.models import Role, User, UserRole
 from app.tests.testing_data import USER_DATA
-from config import (
-    TEST_DB,
-    TEST_DB_HOST,
-    TEST_DB_PASSWORD,
-    TEST_DB_PORT,
-    TEST_DB_USER,
-    TEST_REDIS_DB
-)
+from config import TEST_DB, TEST_DB_HOST, TEST_DB_PASSWORD, TEST_DB_PORT, TEST_DB_USER
 
 
 class BaseAuthTestCase(TestCase):

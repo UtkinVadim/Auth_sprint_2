@@ -13,7 +13,5 @@ api_urls = [
     (SocialLogin, "/login/<string:name>"),
     (SocialAuth, "/api/oauth2/callback/<string:social_name>"),
     (RemoveSocialAccount, "/api/remove_social_account"),
-
     (Homepage, "/"),
 ]
-

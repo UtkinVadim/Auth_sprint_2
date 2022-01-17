@@ -11,5 +11,5 @@ class VkDataParser(BaseDataParser):
             open_id=userinfo_dict.get("id"),
             email=self.token.get("email"),
             first_name=userinfo_dict.get("first_name"),
-            last_name=userinfo_dict.get("last_name")
+            last_name=userinfo_dict.get("last_name"),
         )

@@ -17,9 +17,7 @@ class LoginHistory(db.Model):
     fingerprint = db.Column(db.String)
     event_date = db.Column(db.DateTime(), default=datetime.utcnow)
 
-    __table_args__ = (ForeignKeyConstraint((user_id, user_is_active),
-                                           (User.id, User.is_active)),
-                      {})
+    __table_args__ = (ForeignKeyConstraint((user_id, user_is_active), (User.id, User.is_active)), {})
 
     @classmethod
     def log_sign_in(cls, user_id: str, fingerprint: str):

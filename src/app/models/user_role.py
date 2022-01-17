@@ -17,10 +17,11 @@ class UserRole(db.Model):
     role_id = db.Column(UUID(as_uuid=True), db.ForeignKey("role.id"), nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
 
-    __table_args__ = (UniqueConstraint("user_id", "role_id", name="unique_user_role"),
-                      ForeignKeyConstraint((user_id, user_is_active),
-                                           (User.id, User.is_active)),
-                      {})
+    __table_args__ = (
+        UniqueConstraint("user_id", "role_id", name="unique_user_role"),
+        ForeignKeyConstraint((user_id, user_is_active), (User.id, User.is_active)),
+        {},
+    )
 
     @classmethod
     def add(cls, user_id: str, role_id: str):

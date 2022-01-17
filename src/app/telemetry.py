@@ -8,20 +8,14 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 import config
 
-trace.set_tracer_provider(
-    TracerProvider(
-        resource=Resource.create({SERVICE_NAME: config.SERVICE_NAME_IN_JAEGER})
-    )
-)
+trace.set_tracer_provider(TracerProvider(resource=Resource.create({SERVICE_NAME: config.SERVICE_NAME_IN_JAEGER})))
 
 jaeger_exporter = JaegerExporter(
     agent_host_name=config.JAEGER_HOST,
     agent_port=config.JAEGER_PORT,
 )
 
-trace.get_tracer_provider().add_span_processor(
-    BatchSpanProcessor(jaeger_exporter)
-)
+trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(jaeger_exporter))
 
 
 def add_tracer(app: Flask):

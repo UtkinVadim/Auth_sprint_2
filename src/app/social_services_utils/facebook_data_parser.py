@@ -11,5 +11,5 @@ class FacebookDataParser(BaseDataParser):
             open_id=userinfo_dict.get("id"),
             email=userinfo_dict.get("email"),
             first_name=userinfo_dict.get("name").split(" ")[0],
-            last_name=userinfo_dict.get("name").split(" ")[1]
+            last_name=userinfo_dict.get("name").split(" ")[1],
         )

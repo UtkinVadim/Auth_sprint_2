@@ -14,7 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 redis_client = RedisConnector(config.REDIS_HOST, config.REDIS_PORT, config.REDIS_DB)
 jwt = JWTManager()
-swagger = Swagger(template_file='auth_api_schema.yaml')
+swagger = Swagger(template_file="auth_api_schema.yaml")
 oauth = OAuth()
 limiter = Limiter(key_func=get_remote_address, storage_uri=config.BUCKET_REDIS_URI, default_limits=["30 per minute"])
 
@@ -33,6 +33,7 @@ def create_app(test_config: dict = None) -> Flask:
         jwt.init_app(app)
         add_tracer(app)
         if config.USE_NGINX:
+
             @app.before_request
             def before_request():
                 """
@@ -41,9 +42,10 @@ def create_app(test_config: dict = None) -> Flask:
 
                 :return:
                 """
-                request_id = request.headers.get('X-Request-Id')
+                request_id = request.headers.get("X-Request-Id")
                 if not request_id:
-                    raise RuntimeError('request id is required')
+                    raise RuntimeError("request id is required")
+
     else:
         app.config.from_mapping(test_config)
 
@@ -65,18 +67,20 @@ def create_urls(app: Flask):
     :param app:
     :return:
     """
-    core_api_bp = Blueprint('core_api', __name__)
-    api_v1_bp = Blueprint('api_v1', __name__)
+    core_api_bp = Blueprint("core_api", __name__)
+    api_v1_bp = Blueprint("api_v1", __name__)
     # подключение постоянных ручек
     api = Api(core_api_bp)
     from app.api.urls import api_urls
+
     for resource, url in api_urls:
         api.add_resource(resource, url)
-    app.register_blueprint(core_api_bp, url_prefix='/')
+    app.register_blueprint(core_api_bp, url_prefix="/")
 
     # подключение версионных ручек
     api_v1 = Api(api_v1_bp)
     from app.api.v1.urls import api_v1_urls
+
     for resource, url in api_v1_urls:
         api_v1.add_resource(resource, url)
-    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
+    app.register_blueprint(api_v1_bp, url_prefix="/api/v1")

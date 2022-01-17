@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_jwt_extended import get_jwt, jwt_required
 from flask_restful import Resource, reqparse
 
-from app import models, redis_client
+from app import redis_client
 
 
 sign_out_parser = reqparse.RequestParser()

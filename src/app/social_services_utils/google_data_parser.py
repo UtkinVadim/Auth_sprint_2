@@ -9,5 +9,5 @@ class GoogleDataParser(BaseDataParser):
             open_id=userinfo_dict.get("sub"),
             email=userinfo_dict.get("email"),
             first_name=userinfo_dict.get("family_name"),
-            last_name=userinfo_dict.get("given_name")
+            last_name=userinfo_dict.get("given_name"),
         )

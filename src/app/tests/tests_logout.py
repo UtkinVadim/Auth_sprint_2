@@ -4,7 +4,6 @@ from app.tests.base_auth_test_case import BaseAuthTestCase
 
 
 class LogOutTestCase(BaseAuthTestCase):
-
     def setUp(self):
         super().setUp()
         self.authorize_client()

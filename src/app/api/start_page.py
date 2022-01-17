@@ -9,5 +9,5 @@ class Homepage(Resource):
     """
 
     def get(self):
-        user = session.get('user')
+        user = session.get("user")
         return make_response(render_template("main.html", user=user))

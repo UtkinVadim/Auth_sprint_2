@@ -12,31 +12,29 @@ from app.models.user import User
 
 
 class SocialAccount(db.Model):
-    __tablename__ = 'social_account'
+    __tablename__ = "social_account"
 
     id = db.Column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     user_id = db.Column(UUID(as_uuid=True), nullable=False)
     user_is_active = db.Column(BOOLEAN, default=True)
-    user = db.relationship(User, backref=db.backref('social_accounts', lazy=True))
+    user = db.relationship(User, backref=db.backref("social_accounts", lazy=True))
 
     social_id = db.Column(db.Text, nullable=False)
     social_name = db.Column(db.Text, nullable=False)
 
-    __table_args__ = (db.UniqueConstraint('social_id', 'social_name', name='social_pk'),
-                      ForeignKeyConstraint((user_id, user_is_active),
-                                           (User.id, User.is_active)),
-                      {}
-                      )
+    __table_args__ = (
+        db.UniqueConstraint("social_id", "social_name", name="social_pk"),
+        ForeignKeyConstraint((user_id, user_is_active), (User.id, User.is_active)),
+        {},
+    )
 
     def __repr__(self):
-        return f'<SocialAccount {self.social_name}:{self.user_id}>'
+        return f"<SocialAccount {self.social_name}:{self.user_id}>"
 
     @classmethod
-    def create_social_connect(cls,
-                              social_id: str,
-                              social_name: str,
-                              user_id: str = None,
-                              user_fields: dict[str, str] = {}) -> Optional[db.Model]:
+    def create_social_connect(
+        cls, social_id: str, social_name: str, user_id: str = None, user_fields: dict[str, str] = {}
+    ) -> Optional[db.Model]:
         """
         Создаёт связку пользователь - соц сеть.
         Если пользователя в базе нет - сначала создаёт, а потом добавляет связку.
@@ -58,14 +56,15 @@ class SocialAccount(db.Model):
         return social_account
 
     @classmethod
-    def create_user_from_social_account(cls,
-                                        login: Optional[str] = None,
-                                        password: Optional[str] = None,
-                                        email: Optional[str] = '*@*',
-                                        first_name: Optional[str] = None,
-                                        last_name: Optional[str] = None,
-                                        **kwargs
-                                        ) -> str:
+    def create_user_from_social_account(
+        cls,
+        login: Optional[str] = None,
+        password: Optional[str] = None,
+        email: Optional[str] = "*@*",
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        **kwargs,
+    ) -> str:
         """
         Создаёт нового пользователя. Метод нужен при входе через соц сети нового пользователя.
 
@@ -86,11 +85,9 @@ class SocialAccount(db.Model):
         if not password:
             password = cls.id_generator()
 
-        user = User.create({'login': login,
-                            'password': password,
-                            'email': email,
-                            'first_name': first_name,
-                            'last_name': last_name})
+        user = User.create(
+            {"login": login, "password": password, "email": email, "first_name": first_name, "last_name": last_name}
+        )
         db.session.add(user)
         db.session.commit()
         return user.id

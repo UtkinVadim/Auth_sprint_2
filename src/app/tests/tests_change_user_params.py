@@ -17,7 +17,7 @@ class SignInTestCase(BaseAuthTestCase):
         self.headers_refresh = {"Authorization": f"Bearer {self.refresh_token}"}
 
     def test_change_login(self):
-        response = self.client.post(self.url, headers=self.headers, json= {"login": "AnotherMrSmith"})
+        response = self.client.post(self.url, headers=self.headers, json={"login": "AnotherMrSmith"})
         assert response.json == {"message": "successfully changed"}
         response = self.client.post(self.sign_out_url, headers=self.headers_refresh)
         assert response.json == {"message": "Refresh token revoked"}

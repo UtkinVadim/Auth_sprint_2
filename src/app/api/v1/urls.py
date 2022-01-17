@@ -10,5 +10,5 @@ api_v1_urls = [
     (ChangeUserParams, "/user/change"),
     (UserHistory, "/user/history"),
     (RoleManipulation, "/user/role"),
-    (Role, "/access/role")
+    (Role, "/access/role"),
 ]

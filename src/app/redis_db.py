@@ -56,5 +56,3 @@ class RedisConnector:
         Метод для генерации ключа для redis.
         """
         return "::".join([user_id, jti])
-
-

@@ -75,11 +75,7 @@ VK_API_BASE_URL = "https://api.vk.com/method/"
 VK_ACCESS_TOKEN_URL = "https://oauth.vk.com/access_token"
 VK_AUTHORIZE_URL = "https://oauth.vk.com/authorize"
 VK_USERINFO_URL = "https://api.vk.com/method/users.get?v=5.131"
-VK_OAUTH_SETTINGS = {
-    "token_placement": "uri",
-    "token_endpoint_auth_method": "client_secret_post",
-    "scope": "email"
-}
+VK_OAUTH_SETTINGS = {"token_placement": "uri", "token_endpoint_auth_method": "client_secret_post", "scope": "email"}
 
 BUCKET_REDIS_DATABASE = 1
 BUCKET_REDIS_URI = f"redis://{REDIS_HOST}:{REDIS_PORT}?db={BUCKET_REDIS_DATABASE}"
@@ -88,5 +84,5 @@ USE_NGINX = int(os.getenv("USE_NGINX", 0))
 
 JAEGER_HOST = os.getenv("JAEGER_HOST", "localhost")
 JAEGER_PORT = int(os.getenv("JAEGER_PORT", 6831))
-SERVICE_NAME_IN_JAEGER = '_'.join(["movies", SERVER_HOST, POSTGRES_HOST, REDIS_HOST])
+SERVICE_NAME_IN_JAEGER = "_".join(["movies", SERVER_HOST, POSTGRES_HOST, REDIS_HOST])
 JAEGER_EXCLUDED_URLS = os.getenv("JAEGER_EXCLUDED_URLS", "")

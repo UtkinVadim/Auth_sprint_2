@@ -2,15 +2,29 @@ from enum import Enum
 
 from authlib.integrations.flask_client.oauth_registry import OAuth
 
-from config import (FACEBOOK_ACCESS_TOKEN_URL, FACEBOOK_API_BASE_URL,
-                    FACEBOOK_APP_ID, FACEBOOK_APP_SECRET,
-                    FACEBOOK_AUTHORIZE_URL, FACEBOOK_OAUTH_SETTINGS,
-                    GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
-                    GOOGLE_DISCOVERY_URL, GOOGLE_OAUTH_SETTINGS,
-                    VK_ACCESS_TOKEN_URL, VK_API_BASE_URL, VK_AUTHORIZE_URL,
-                    VK_CLIENT_ID, VK_OAUTH_SETTINGS, VK_SECRET_KEY,
-                    YANDEX_ACCESS_TOKEN_URL, YANDEX_API_BASE_URL,
-                    YANDEX_APP_ID, YANDEX_APP_SECRET, YANDEX_AUTHORIZE_URL)
+from config import (
+    FACEBOOK_ACCESS_TOKEN_URL,
+    FACEBOOK_API_BASE_URL,
+    FACEBOOK_APP_ID,
+    FACEBOOK_APP_SECRET,
+    FACEBOOK_AUTHORIZE_URL,
+    FACEBOOK_OAUTH_SETTINGS,
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    GOOGLE_DISCOVERY_URL,
+    GOOGLE_OAUTH_SETTINGS,
+    VK_ACCESS_TOKEN_URL,
+    VK_API_BASE_URL,
+    VK_AUTHORIZE_URL,
+    VK_CLIENT_ID,
+    VK_OAUTH_SETTINGS,
+    VK_SECRET_KEY,
+    YANDEX_ACCESS_TOKEN_URL,
+    YANDEX_API_BASE_URL,
+    YANDEX_APP_ID,
+    YANDEX_APP_SECRET,
+    YANDEX_AUTHORIZE_URL,
+)
 
 
 class Services(Enum):
@@ -33,7 +47,7 @@ def google_register(oauth: OAuth) -> None:
         client_id=GOOGLE_CLIENT_ID,
         client_secret=GOOGLE_CLIENT_SECRET,
         server_metadata_url=GOOGLE_DISCOVERY_URL,
-        client_kwargs=GOOGLE_OAUTH_SETTINGS
+        client_kwargs=GOOGLE_OAUTH_SETTINGS,
     )
 
 
@@ -54,7 +68,7 @@ def facebook_register(oauth: OAuth) -> None:
         authorize_url=FACEBOOK_AUTHORIZE_URL,
         access_token_params=None,
         authorize_params=None,
-        client_kwargs=FACEBOOK_OAUTH_SETTINGS
+        client_kwargs=FACEBOOK_OAUTH_SETTINGS,
     )
 
 
@@ -72,7 +86,7 @@ def yandex_register(oauth: OAuth) -> None:
         client_secret=YANDEX_APP_SECRET,
         api_base_url=YANDEX_API_BASE_URL,
         access_token_url=YANDEX_ACCESS_TOKEN_URL,
-        authorize_url=YANDEX_AUTHORIZE_URL
+        authorize_url=YANDEX_AUTHORIZE_URL,
     )
 
 
@@ -91,7 +105,7 @@ def vk_register(oauth: OAuth) -> None:
         api_base_url=VK_API_BASE_URL,
         access_token_url=VK_ACCESS_TOKEN_URL,
         authorize_url=VK_AUTHORIZE_URL,
-        client_kwargs=VK_OAUTH_SETTINGS
+        client_kwargs=VK_OAUTH_SETTINGS,
     )
 
 

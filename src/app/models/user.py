@@ -19,9 +19,7 @@ def create_partition(target, connection, **kwargs) -> None:
     Создание патрицирования для таблицы юзеров.
     Разделяются на активных и не активных.
     """
-    connection.execute(
-        """CREATE TABLE IF NOT EXISTS "active_user" PARTITION OF "user_auth" FOR VALUES IN ('true')"""
-    )
+    connection.execute("""CREATE TABLE IF NOT EXISTS "active_user" PARTITION OF "user_auth" FOR VALUES IN ('true')""")
     connection.execute(
         """CREATE TABLE IF NOT EXISTS "inactive_user" PARTITION OF "user_auth" FOR VALUES IN ('false')"""
     )
@@ -30,11 +28,11 @@ def create_partition(target, connection, **kwargs) -> None:
 class User(db.Model):
     __tablename__ = "user_auth"
     __table_args__ = (
-        UniqueConstraint('id', 'is_active', 'login'),
+        UniqueConstraint("id", "is_active", "login"),
         {
-            'postgresql_partition_by': 'LIST (is_active)',
-            'listeners': [('after_create', create_partition)],
-        }
+            "postgresql_partition_by": "LIST (is_active)",
+            "listeners": [("after_create", create_partition)],
+        },
     )
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid4, nullable=False)
@@ -127,8 +125,12 @@ class User(db.Model):
 
     @classmethod
     def password_hasher(
-            cls, password: str, salt: str = config.SALT, hash_name: str = "sha256", iterations: int = 100000,
-            encoding: str = "utf-8"
+        cls,
+        password: str,
+        salt: str = config.SALT,
+        hash_name: str = "sha256",
+        iterations: int = 100000,
+        encoding: str = "utf-8",
     ) -> str:
         """
         Создаёт хэш от пароля который будет храниться в базе
@@ -160,5 +162,5 @@ class User(db.Model):
 
         :return:
         """
-        alphabet = ''.join([string.ascii_letters, string.digits])
-        return ''.join(secrets_choice.choice(alphabet) for _ in range(17))
+        alphabet = "".join([string.ascii_letters, string.digits])
+        return "".join(secrets_choice.choice(alphabet) for _ in range(17))

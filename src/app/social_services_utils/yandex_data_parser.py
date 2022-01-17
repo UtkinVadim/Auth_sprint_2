@@ -12,5 +12,5 @@ class YandexDataParser(BaseDataParser):
             email=userinfo_dict.get("default_email"),
             first_name=userinfo_dict.get("first_name"),
             last_name=userinfo_dict.get("last_name"),
-            preffered_username=userinfo_dict.get('login')
+            preffered_username=userinfo_dict.get("login"),
         )
