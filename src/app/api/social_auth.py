@@ -40,7 +40,7 @@ class SocialLogin(Resource):
             scheme = 'https'
         else:
             scheme = 'http'
-        redirect_uri = url_for('socialauth', social_name=name, _external=True, _scheme=scheme)
+        redirect_uri = url_for("core_api.socialauth", social_name=name, _external=True, _scheme=scheme)
         return client.authorize_redirect(redirect_uri)
 
 
