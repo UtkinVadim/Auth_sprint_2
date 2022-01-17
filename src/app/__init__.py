@@ -1,5 +1,5 @@
 from flasgger import Swagger
-from flask import Flask, request
+from flask import Flask, request, Blueprint
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -18,6 +18,9 @@ jwt = JWTManager()
 swagger = Swagger(template_file='auth_api_schema.yaml')
 oauth = OAuth()
 limiter = Limiter(key_func=get_remote_address, storage_uri=config.BUCKET_REDIS_URI, default_limits=["30 per minute"])
+
+core_api_bp = Blueprint('core_api', __name__)
+api_v1_bp = Blueprint('api_v1', __name__)
 
 
 def create_app(test_config: dict = None) -> Flask:
@@ -50,11 +53,19 @@ def create_app(test_config: dict = None) -> Flask:
 
     db.init_app(app)
 
-    api = Api(app)
-    from app.api.v1.urls import urls
-
-    for resource, url in urls:
+    # подключение постоянных ручек
+    api = Api(core_api_bp)
+    from app.api.urls import api_urls
+    for resource, url in api_urls:
         api.add_resource(resource, url)
+    app.register_blueprint(core_api_bp, url_prefix='/')
+
+    # подключение версионных ручек
+    api_v1 = Api(api_v1_bp)
+    from app.api.v1.urls import api_v1_urls
+    for resource, url in api_v1_urls:
+        api_v1.add_resource(resource, url)
+    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
 
     swagger.init_app(app)
 
@@ -62,5 +73,6 @@ def create_app(test_config: dict = None) -> Flask:
     create_oauth_services(oauth)
 
     limiter.init_app(app)
+    print(app.url_map)
 
     return app
