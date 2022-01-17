@@ -23,7 +23,7 @@ class UserRole(db.Model):
                       {})
 
     @classmethod
-    def add(cls, user_id, role_id):
+    def add(cls, user_id: str, role_id: str):
         """
         Добавляет роль пользователю
 
@@ -36,7 +36,7 @@ class UserRole(db.Model):
         db.session.commit()
 
     @classmethod
-    def delete(cls, user_id, role_id):
+    def delete(cls, user_id: str, role_id: str):
         """
         Удаляет роль у пользователя
 

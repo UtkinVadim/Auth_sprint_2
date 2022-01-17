@@ -1,3 +1,4 @@
+from flask.app import Flask
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
@@ -23,7 +24,7 @@ trace.get_tracer_provider().add_span_processor(
 )
 
 
-def add_tracer(app):
+def add_tracer(app: Flask):
     """
     Добавляет трассировку flask приложения в jaeger
     Результат можно посмотреть по ссылке:

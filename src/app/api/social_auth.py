@@ -15,6 +15,7 @@ from app.social_services_utils import (
     YandexDataParser,
     VkDataParser
 )
+from app.social_services_utils.oauth_services import Services
 
 if TYPE_CHECKING:
     from app.social_services_utils.social_user_model import SocialUserModel
@@ -29,7 +30,7 @@ class SocialLogin(Resource):
     в рамках выполнения протокола oauth. В случае успеха будет редирект на класс авторизации через соцсеть.
     Пользователь видит окно соцсети с запросом предоставления доступа именно в результате работы этого класса.
     """
-    def get(self, name):
+    def get(self, name: str):
         client = oauth.create_client(name)
         if not client:
             return {"message": "invalid social service"}, HTTPStatus.UNAUTHORIZED
@@ -39,7 +40,7 @@ class SocialLogin(Resource):
             scheme = 'https'
         else:
             scheme = 'http'
-        redirect_uri = url_for('socialauth', social_name=name, _external=True, _scheme=scheme)
+        redirect_uri = url_for("core_api.socialauth", social_name=name, _external=True, _scheme=scheme)
         return client.authorize_redirect(redirect_uri)
 
 
@@ -54,7 +55,7 @@ class SocialAuth(Resource):
 
     И в самом конце уже как обычно логируем заход пользователя и возвращаем уже наши access и refresh jwt
     """
-    def get(self, social_name):
+    def get(self, social_name: str):
         args = sign_in_parser.parse_args()
         client: FlaskRemoteApp = oauth.create_client(social_name)
 
@@ -84,8 +85,7 @@ class SocialAuth(Resource):
         Получения user_id из SocialAccount. Если social_account не создан - он создается.
         """
         if not models.SocialAccount.is_social_exist(user_data.open_id):
-            models.SocialAccount.create_social_connect(user_id=None,
-                                                       social_id=user_data.open_id,
+            models.SocialAccount.create_social_connect(social_id=user_data.open_id,
                                                        social_name=social_name,
                                                        user_fields=user_data.dict())
         return models.SocialAccount.query.filter_by(social_id=user_data.open_id).first().user_id
@@ -95,9 +95,9 @@ class SocialAuth(Resource):
         Метод, возвращающий класс для парсинга данных полученных от сервиса.
         """
         parsers = {
-            "facebook": FacebookDataParser,
-            "yandex": YandexDataParser,
-            "google": GoogleDataParser,
-            "vk": VkDataParser
+            Services.FACEBOOK.value: FacebookDataParser,
+            Services.YANDEX.value: YandexDataParser,
+            Services.GOOGLE.value: GoogleDataParser,
+            Services.VK.value: VkDataParser
         }
         return parsers[client_name]
