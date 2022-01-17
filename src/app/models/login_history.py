@@ -22,7 +22,7 @@ class LoginHistory(db.Model):
                       {})
 
     @classmethod
-    def log_sign_in(cls, user_id, fingerprint):
+    def log_sign_in(cls, user_id: str, fingerprint: str):
         """
         Создаёт запись в базе об успешном логине пользователя
 
@@ -35,7 +35,7 @@ class LoginHistory(db.Model):
         db.session.commit()
 
     @classmethod
-    def get_user_events(cls, user_id) -> list[dict[str, str]]:
+    def get_user_events(cls, user_id: str) -> list[dict[str, str]]:
         """
         Возвращает список успешных логонов пользователя
 

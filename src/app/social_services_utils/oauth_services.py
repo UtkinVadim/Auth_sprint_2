@@ -1,5 +1,7 @@
 from enum import Enum
 
+from authlib.integrations.flask_client.oauth_registry import OAuth
+
 from config import (FACEBOOK_ACCESS_TOKEN_URL, FACEBOOK_API_BASE_URL,
                     FACEBOOK_APP_ID, FACEBOOK_APP_SECRET,
                     FACEBOOK_AUTHORIZE_URL, FACEBOOK_OAUTH_SETTINGS,
@@ -18,7 +20,7 @@ class Services(Enum):
     VK = "vk"
 
 
-def google_register(oauth):
+def google_register(oauth: OAuth) -> None:
     """
     Регистрирует гугл как сервис в котором можно пройти oauth
     После регистрации oauth получает атрибут с именем указанным в name
@@ -35,7 +37,7 @@ def google_register(oauth):
     )
 
 
-def facebook_register(oauth):
+def facebook_register(oauth: OAuth) -> None:
     """
     Регистрирует facebook как сервис в котором можно пройти oauth
     После регистрации oauth получает атрибут с именем указанным в name
@@ -56,7 +58,7 @@ def facebook_register(oauth):
     )
 
 
-def yandex_register(oauth):
+def yandex_register(oauth: OAuth) -> None:
     """
     Регистрирует yandex как сервис в котором можно пройти oauth
     После регистрации oauth получает атрибут с именем указанным в name
@@ -74,7 +76,7 @@ def yandex_register(oauth):
     )
 
 
-def vk_register(oauth):
+def vk_register(oauth: OAuth) -> None:
     """
     Регистрирует vkontakte как сервис в котором можно пройти oauth
     После регистрации oauth получает атрибут с именем указанным в name
@@ -93,7 +95,7 @@ def vk_register(oauth):
     )
 
 
-def create_oauth_services(oauth):
+def create_oauth_services(oauth: OAuth) -> None:
     google_register(oauth)
     facebook_register(oauth)
     yandex_register(oauth)

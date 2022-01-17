@@ -153,7 +153,6 @@ class User(db.Model):
     def get_user_by_universal_login(cls, login: Optional[str] = None, email: Optional[str] = None):
         return User.query.filter(or_(User.login == login, User.email == email)).first()
 
-
     @classmethod
     def generate_random_string(cls) -> str:
         """

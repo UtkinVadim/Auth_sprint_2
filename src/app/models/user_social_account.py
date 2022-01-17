@@ -32,7 +32,11 @@ class SocialAccount(db.Model):
         return f'<SocialAccount {self.social_name}:{self.user_id}>'
 
     @classmethod
-    def create_social_connect(cls, user_id, social_id, social_name, user_fields: dict[str, str] = {}):
+    def create_social_connect(cls,
+                              social_id: str,
+                              social_name: str,
+                              user_id: str = None,
+                              user_fields: dict[str, str] = {}) -> Optional[db.Model]:
         """
         Создаёт связку пользователь - соц сеть.
         Если пользователя в базе нет - сначала создаёт, а потом добавляет связку.
@@ -103,7 +107,7 @@ class SocialAccount(db.Model):
         return bool(social_account)
 
     @staticmethod
-    def id_generator(size=2, chars=string.ascii_uppercase + string.digits) -> str:
+    def id_generator(size: int = 2, chars: str = string.ascii_uppercase + string.digits) -> str:
         """
         Генерирует строку,
         состоящую из радномный символ + timestamp + радномный символ (другой).

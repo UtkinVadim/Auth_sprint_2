@@ -52,7 +52,7 @@ class Role(db.Model):
         return role
 
     @classmethod
-    def delete(cls, role):
+    def delete(cls, role: db.Model):
         """
         Удаляет роль
 
