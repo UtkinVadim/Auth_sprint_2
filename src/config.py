@@ -51,23 +51,42 @@ SUPERUSER_EMAIL = os.getenv("SUPERUSER_EMAIL")
 
 FACEBOOK_APP_ID = os.getenv("FACEBOOK_APP_ID")
 FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET")
+FACEBOOK_USERINFO_URL = "https://graph.facebook.com/me?fields=id,name,email{url}"
+FACEBOOK_API_BASE_URL = "https://graph.facebook.com/"
+FACEBOOK_ACCESS_TOKEN_URL = "https://graph.facebook.com/oauth/access_token"
+FACEBOOK_AUTHORIZE_URL = "https://www.facebook.com/dialog/oauth"
+FACEBOOK_OAUTH_SETTINGS = {"scope": "email openid public_profile"}
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_DISCOVERY_URL = os.getenv("GOOGLE_DISCOVERY_URL")
+GOOGLE_OAUTH_SETTINGS = {"scope": "openid email profile"}
 
 YANDEX_APP_ID = os.getenv("YANDEX_APP_ID")
 YANDEX_APP_SECRET = os.getenv("YANDEX_APP_SECRET")
+YANDEX_API_BASE_URL = "https://login.yandex.ru/"
+YANDEX_ACCESS_TOKEN_URL = "https://oauth.yandex.com/token"
+YANDEX_AUTHORIZE_URL = "https://oauth.yandex.com/authorize"
+YANDEX_USERINFO_URL = "https://login.yandex.ru/info?format=json"
 
 VK_CLIENT_ID = os.getenv("VK_CLIENT_ID")
 VK_SECRET_KEY = os.getenv("VK_SECRET_KEY")
+VK_API_BASE_URL = "https://api.vk.com/method/"
+VK_ACCESS_TOKEN_URL = "https://oauth.vk.com/access_token"
+VK_AUTHORIZE_URL = "https://oauth.vk.com/authorize"
+VK_USERINFO_URL = "https://api.vk.com/method/users.get?v=5.131"
+VK_OAUTH_SETTINGS = {
+    "token_placement": "uri",
+    "token_endpoint_auth_method": "client_secret_post",
+    "scope": "email"
+}
 
 BUCKET_REDIS_DATABASE = 1
 BUCKET_REDIS_URI = f"redis://{REDIS_HOST}:{REDIS_PORT}?db={BUCKET_REDIS_DATABASE}"
 
 USE_NGINX = int(os.getenv("USE_NGINX", 0))
 
-JAEGER_HOST = os.getenv("JAEGER_HOST", 'localhost')
+JAEGER_HOST = os.getenv("JAEGER_HOST", "localhost")
 JAEGER_PORT = int(os.getenv("JAEGER_PORT", 6831))
 SERVICE_NAME_IN_JAEGER = '_'.join(["movies", SERVER_HOST, POSTGRES_HOST, REDIS_HOST])
 JAEGER_EXCLUDED_URLS = os.getenv("JAEGER_EXCLUDED_URLS", "")

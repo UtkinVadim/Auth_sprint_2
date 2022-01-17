@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 
-from authlib.integrations.flask_client import FlaskRemoteApp
-
 from app.social_services_utils.social_user_model import SocialUserModel
+from authlib.integrations.flask_client import FlaskRemoteApp
 
 
 class BaseDataParser(ABC):

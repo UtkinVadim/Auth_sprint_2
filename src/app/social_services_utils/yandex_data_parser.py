@@ -1,10 +1,11 @@
 from app.social_services_utils.base_data_parser import BaseDataParser
 from app.social_services_utils.social_user_model import SocialUserModel
+from config import YANDEX_USERINFO_URL
 
 
 class YandexDataParser(BaseDataParser):
     def get_user_info(self) -> SocialUserModel:
-        userinfo = self.client.get('https://login.yandex.ru/info?format=json')
+        userinfo = self.client.get(YANDEX_USERINFO_URL)
         userinfo_dict = userinfo.json()
         return SocialUserModel(
             open_id=userinfo_dict.get("id"),

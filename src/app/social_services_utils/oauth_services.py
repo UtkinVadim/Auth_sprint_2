@@ -1,12 +1,12 @@
-from config import (
-    GOOGLE_DISCOVERY_URL,
-    FACEBOOK_APP_SECRET,
-    FACEBOOK_APP_ID,
-    YANDEX_APP_SECRET,
-    YANDEX_APP_ID,
-    VK_CLIENT_ID,
-    VK_SECRET_KEY
-)
+from config import (FACEBOOK_ACCESS_TOKEN_URL, FACEBOOK_API_BASE_URL,
+                    FACEBOOK_APP_ID, FACEBOOK_APP_SECRET,
+                    FACEBOOK_AUTHORIZE_URL, FACEBOOK_OAUTH_SETTINGS,
+                    GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
+                    GOOGLE_DISCOVERY_URL, GOOGLE_OAUTH_SETTINGS,
+                    VK_ACCESS_TOKEN_URL, VK_API_BASE_URL, VK_AUTHORIZE_URL,
+                    VK_CLIENT_ID, VK_OAUTH_SETTINGS, VK_SECRET_KEY,
+                    YANDEX_ACCESS_TOKEN_URL, YANDEX_API_BASE_URL,
+                    YANDEX_APP_ID, YANDEX_APP_SECRET, YANDEX_AUTHORIZE_URL)
 
 
 def google_register(oauth):
@@ -19,10 +19,10 @@ def google_register(oauth):
     """
     oauth.register(
         name='google',
+        client_id=GOOGLE_CLIENT_ID,
+        client_secret=GOOGLE_CLIENT_SECRET,
         server_metadata_url=GOOGLE_DISCOVERY_URL,
-        client_kwargs={
-            'scope': 'openid email profile'
-        }
+        client_kwargs=GOOGLE_OAUTH_SETTINGS
     )
 
 
@@ -38,12 +38,12 @@ def facebook_register(oauth):
         name='facebook',
         client_id=FACEBOOK_APP_ID,
         client_secret=FACEBOOK_APP_SECRET,
-        access_token_url="https://graph.facebook.com/oauth/access_token",
+        api_base_url=FACEBOOK_API_BASE_URL,
+        access_token_url=FACEBOOK_ACCESS_TOKEN_URL,
+        authorize_url=FACEBOOK_AUTHORIZE_URL,
         access_token_params=None,
-        authorize_url="https://www.facebook.com/dialog/oauth",
         authorize_params=None,
-        api_base_url="https://graph.facebook.com/",
-        client_kwargs={"scope": "email openid public_profile"}
+        client_kwargs=FACEBOOK_OAUTH_SETTINGS
     )
 
 
@@ -59,9 +59,9 @@ def yandex_register(oauth):
         name='yandex',
         client_id=YANDEX_APP_ID,
         client_secret=YANDEX_APP_SECRET,
-        api_base_url='https://login.yandex.ru/',
-        access_token_url='https://oauth.yandex.com/token',
-        authorize_url='https://oauth.yandex.com/authorize',
+        api_base_url=YANDEX_API_BASE_URL,
+        access_token_url=YANDEX_ACCESS_TOKEN_URL,
+        authorize_url=YANDEX_AUTHORIZE_URL
     )
 
 
@@ -77,14 +77,10 @@ def vk_register(oauth):
         name='vk',
         client_id=VK_CLIENT_ID,
         client_secret=VK_SECRET_KEY,
-        api_base_url="https://api.vk.com/method/",
-        access_token_url="https://oauth.vk.com/access_token",
-        authorize_url="https://oauth.vk.com/authorize",
-        client_kwargs={
-            "token_placement": "uri",
-            "token_endpoint_auth_method": "client_secret_post",
-            "scope": "email"
-        }
+        api_base_url=VK_API_BASE_URL,
+        access_token_url=VK_ACCESS_TOKEN_URL,
+        authorize_url=VK_AUTHORIZE_URL,
+        client_kwargs=VK_OAUTH_SETTINGS
     )
 
 
