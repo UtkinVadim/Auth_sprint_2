@@ -1,3 +1,5 @@
+from enum import Enum
+
 from config import (FACEBOOK_ACCESS_TOKEN_URL, FACEBOOK_API_BASE_URL,
                     FACEBOOK_APP_ID, FACEBOOK_APP_SECRET,
                     FACEBOOK_AUTHORIZE_URL, FACEBOOK_OAUTH_SETTINGS,
@@ -9,6 +11,13 @@ from config import (FACEBOOK_ACCESS_TOKEN_URL, FACEBOOK_API_BASE_URL,
                     YANDEX_APP_ID, YANDEX_APP_SECRET, YANDEX_AUTHORIZE_URL)
 
 
+class Services(Enum):
+    GOOGLE = "google"
+    FACEBOOK = "facebook"
+    YANDEX = "yandex"
+    VK = "vk"
+
+
 def google_register(oauth):
     """
     Регистрирует гугл как сервис в котором можно пройти oauth
@@ -18,7 +27,7 @@ def google_register(oauth):
     :return:
     """
     oauth.register(
-        name='google',
+        name=Services.GOOGLE.value,
         client_id=GOOGLE_CLIENT_ID,
         client_secret=GOOGLE_CLIENT_SECRET,
         server_metadata_url=GOOGLE_DISCOVERY_URL,
@@ -35,7 +44,7 @@ def facebook_register(oauth):
     :return:
     """
     oauth.register(
-        name='facebook',
+        name=Services.FACEBOOK.value,
         client_id=FACEBOOK_APP_ID,
         client_secret=FACEBOOK_APP_SECRET,
         api_base_url=FACEBOOK_API_BASE_URL,
@@ -56,7 +65,7 @@ def yandex_register(oauth):
     :return:
     """
     oauth.register(
-        name='yandex',
+        name=Services.YANDEX.value,
         client_id=YANDEX_APP_ID,
         client_secret=YANDEX_APP_SECRET,
         api_base_url=YANDEX_API_BASE_URL,
@@ -74,7 +83,7 @@ def vk_register(oauth):
     :return:
     """
     oauth.register(
-        name='vk',
+        name=Services.VK.value,
         client_id=VK_CLIENT_ID,
         client_secret=VK_SECRET_KEY,
         api_base_url=VK_API_BASE_URL,

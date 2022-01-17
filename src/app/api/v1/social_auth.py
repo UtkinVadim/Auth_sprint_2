@@ -15,6 +15,7 @@ from app.social_services_utils import (
     YandexDataParser,
     VkDataParser
 )
+from app.social_services_utils.oauth_services import Services
 
 if TYPE_CHECKING:
     from app.social_services_utils.social_user_model import SocialUserModel
@@ -95,9 +96,9 @@ class SocialAuth(Resource):
         Метод, возвращающий класс для парсинга данных полученных от сервиса.
         """
         parsers = {
-            "facebook": FacebookDataParser,
-            "yandex": YandexDataParser,
-            "google": GoogleDataParser,
-            "vk": VkDataParser
+            Services.FACEBOOK.value: FacebookDataParser,
+            Services.YANDEX.value: YandexDataParser,
+            Services.GOOGLE.value: GoogleDataParser,
+            Services.VK.value: VkDataParser
         }
         return parsers[client_name]
